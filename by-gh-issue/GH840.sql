@@ -1,0 +1,241 @@
+﻿-- GH8840
+
+-- 1. Name this file after its corresponding GitHub issue
+-- 2. Search for <api_name> and replace with API program name (shift + command + H)
+-- 3. Remove service program compile commands if not used
+-- 4. Search for <api_text> and replace with API text
+-- 5. Search for <api_test_text> and replace with API test text
+-- 6. If service programs are involved...
+--    A. Search for <srvpgm_name> and replace with service program name
+--    B. Search for <srvpgm_text> and replace with service program text
+
+--------------------------------------------------------------------------------
+-- Set Up
+--------------------------------------------------------------------------------
+
+-- CL: CPYSRCF FROMFILE(WEB_5DEV/QRPGLESRC) TOFILE(ACS_5DEV/QRPGLESRC) FROMMBR(<api_name>) TOMBR(<api_name>);
+
+
+
+--------------------------------------------------------------------------------
+-- In Development
+--------------------------------------------------------------------------------
+
+-- Service Program(s)
+-- AR_INTCAML
+CL: RMVBNDDIRE BNDDIR(K3SDIR) OBJ(AR_INTCAML);
+CL: DLTOBJ OBJ(ACS_5OBJ/AR_INTCAML) OBJTYPE(*SRVPGM);
+CL: DLTOBJ OBJ(ACS_5OBJ/AR_INTCAML) OBJTYPE(*MODULE);
+CL: CRTSQLRPGI OBJ(ACS_5OBJ/AR_INTCAML) SRCFILE(ACS_5DEV/QRPGLESRC) OBJTYPE(*MODULE) DBGVIEW(*SOURCE) TGTRLS(V7R2M0);
+CL: CRTSRVPGM SRVPGM(ACS_5OBJ/AR_INTCAML) MODULE(ACS_5OBJ/AR_INTCAML) SRCFILE(ACS_5DEV/QSRVSRC) SRCMBR(INTCAML_B) BNDDIR(K3SDIR) TEXT('Web-Service Prog. 2 Insert/Delete/Update K_INTCAML');
+CL: ADDBNDDIRE BNDDIR(K3SDIR) OBJ((AR_INTCAML));
+
+
+-- API Program(s)
+-- AR_CMLORDR
+CL: CRTSQLRPGI OBJ(ACS_5OBJ/AR_CMLORDR) SRCFILE(ACS_5DEV/QRPGLESRC) COMMIT(*NONE) OPTION(*EVENTF *XREF) DBGVIEW(*SOURCE) TGTRLS(V7R2M0) TEXT('Web - Open CAMEL PO');
+
+-- AC_CMLORDR
+CL: CRTBNDCL PGM(ACS_5OBJ/AC_CMLORDR) SRCFILE(ACS_5DEV/QCLLESRC) OPTION(*EVENTF) DBGVIEW(*SOURCE) TEXT('Web - Open CAMEL PO');
+
+-- TS_CMLORDR
+CL: CRTBNDCL PGM(ACS_5OBJ/TS_CMLORDR) SRCFILE(ACS_5DEV/QCLLESRC) OPTION(*EVENTF) DBGVIEW(*SOURCE) TEXT('Web - Testing AC_CMLORDR');
+
+
+-- Authority
+CL: GRTOBJAUT OBJ(ACS_5OBJ/AR_INTCAML) OBJTYPE(*SRVPGM) USER(*PUBLIC) AUT(*ALL);
+CL: GRTOBJAUT OBJ(ACS_5OBJ/AR_CMLORDR) OBJTYPE(*PGM) USER(*PUBLIC) AUT(*ALL);
+CL: GRTOBJAUT OBJ(ACS_5OBJ/AC_CMLORDR) OBJTYPE(*PGM) USER(*PUBLIC) AUT(*ALL);
+CL: GRTOBJAUT OBJ(ACS_5OBJ/TS_CMLORDR) OBJTYPE(*PGM) USER(*PUBLIC) AUT(*ALL);
+
+--------------------------------------------------------------------------------
+-- Integrated Testing Environment
+--------------------------------------------------------------------------------
+
+-- Table(s)
+CL: CRTDUPOBJ OBJ(K_INTCAML) FROMLIB(ACS_5MOD) OBJTYPE(*FILE) TOLIB(WEB_5MOD) NEWOBJ(K_INTCAML) DATA(*NO);
+
+-- Service Program(s)
+-- AR_INTCAML
+CL: RMVBNDDIRE BNDDIR(K3SDIR) OBJ(AR_INTCAML);
+CL: DLTOBJ OBJ(WEB_5TST/AR_INTCAML) OBJTYPE(*SRVPGM);
+CL: DLTOBJ OBJ(WEB_5TST/AR_INTCAML) OBJTYPE(*MODULE);
+CL: CPYSRCF FROMFILE(ACS_5DEV/QRPGLESRC) TOFILE(WEB_5TDV/QRPGLESRC) FROMMBR(AR_INTCAML) TOMBR(AR_INTCAML);
+CL: CPYSRCF FROMFILE(ACS_5DEV/QRPGLESRC) TOFILE(WEB_5TDV/QRPGLESRC) FROMMBR(INTCAML_H) TOMBR(INTCAML_H);
+CL: CRTSQLRPGI OBJ(WEB_5TST/AR_INTCAML) SRCFILE(WEB_5TDV/QRPGLESRC) OBJTYPE(*MODULE) DBGVIEW(*SOURCE) TGTRLS(V7R2M0);
+CL: CPYSRCF FROMFILE(ACS_5DEV/QSRVSRC) TOFILE(WEB_5TDV/QSRVSRC) FROMMBR(INTCAML_B) TOMBR(INTCAML_B);
+CL: CRTSRVPGM SRVPGM(WEB_5TST/AR_INTCAML) MODULE(WEB_5TST/AR_INTCAML) SRCFILE(WEB_5TDV/QSRVSRC) SRCMBR(INTCAML_B) BNDDIR(K3SDIR) TEXT('Web-Service Prog. 2 Insert/Delete/Update K_INTCAML');
+CL: ADDBNDDIRE BNDDIR(K3SDIR) OBJ((AR_INTCAML));
+
+-- API Program(s)
+-- AR_CMLORDR
+CL: CPYSRCF FROMFILE(ACS_5DEV/QRPGLESRC) TOFILE(WEB_5TDV/QRPGLESRC) FROMMBR(AR_CMLORDR) TOMBR(AR_CMLORDR);
+CL: CRTSQLRPGI OBJ(WEB_5TST/AR_CMLORDR) SRCFILE(WEB_5TDV/QRPGLESRC) COMMIT(*NONE) OPTION(*EVENTF *XREF) DBGVIEW(*SOURCE) TGTRLS(V7R2M0) TEXT('Web - Open CAMEL PO');
+
+-- AC_CMLORDR
+CL: CPYSRCF FROMFILE(ACS_5DEV/QCLLESRC) TOFILE(WEB_5TDV/QCLLESRC) FROMMBR(AC_CMLORDR) TOMBR(AC_CMLORDR);
+CL: CRTBNDCL PGM(WEB_5TST/AC_CMLORDR) SRCFILE(WEB_5TDV/QCLLESRC) OPTION(*EVENTF) DBGVIEW(*SOURCE) TEXT('Web - Open CAMEL PO');
+
+-- TS_CMLORDR
+CL: CPYSRCF FROMFILE(ACS_5DEV/QCLLESRC) TOFILE(WEB_5TDV/QCLLESRC) FROMMBR(TS_CMLORDR) TOMBR(TS_CMLORDR);
+CL: CRTBNDCL PGM(WEB_5TST/TS_CMLORDR) SRCFILE(WEB_5TDV/QCLLESRC) OPTION(*EVENTF) DBGVIEW(*SOURCE) TEXT('Web - Testing AC_CMLORDR');
+
+CL: GRTOBJAUT OBJ(WEB_5TST/AR_INTCAML) OBJTYPE(*SRVPGM) USER(*PUBLIC) AUT(*ALL);
+CL: GRTOBJAUT OBJ(WEB_5TST/AR_CMLORDR) OBJTYPE(*PGM) USER(*PUBLIC) AUT(*ALL);
+CL: GRTOBJAUT OBJ(WEB_5TST/AC_CMLORDR) OBJTYPE(*PGM) USER(*PUBLIC) AUT(*ALL);
+CL: GRTOBJAUT OBJ(WEB_5TST/TS_CMLORDR) OBJTYPE(*PGM) USER(*PUBLIC) AUT(*ALL);
+
+
+--------------------------------------------------------------------------------
+-- Deployment
+--------------------------------------------------------------------------------
+
+-- Service Program(s)
+-- AR_INTCAML
+CL: RMVBNDDIRE BNDDIR(K3SDIR) OBJ(AR_INTCAML);
+CL: DLTOBJ OBJ(WEB_5OBJ/AR_INTCAML) OBJTYPE(*SRVPGM);
+CL: DLTOBJ OBJ(WEB_5OBJ/AR_INTCAML) OBJTYPE(*MODULE);
+CL: CPYSRCF FROMFILE(WEB_5TDV/QRPGLESRC) TOFILE(WEB_5DEV/QRPGLESRC) FROMMBR(AR_INTCAML) TOMBR(AR_INTCAML);
+CL: CPYSRCF FROMFILE(WEB_5TDV/QRPGLESRC) TOFILE(WEB_5DEV/QRPGLESRC) FROMMBR(INTCAML_H) TOMBR(INTCAML_H);
+CL: CRTSQLRPGI OBJ(WEB_5OBJ/AR_INTCAML) SRCFILE(WEB_5DEV/QRPGLESRC) OBJTYPE(*MODULE) TGTRLS(V7R2M0);
+CL: CPYSRCF FROMFILE(WEB_5TDV/QSRVSRC) TOFILE(WEB_5DEV/QSRVSRC) FROMMBR(INTCAML_B) TOMBR(INTCAML_B);
+CL: CRTSRVPGM SRVPGM(WEB_5OBJ/AR_INTCAML) MODULE(WEB_5OBJ/AR_INTCAML) SRCFILE(WEB_5DEV/QSRVSRC) SRCMBR(INTCAML_B) BNDDIR(K3SDIR) TEXT('Web-Service Prog. 2 Insert/Delete/Update K_INTCAML');
+CL: ADDBNDDIRE BNDDIR(K3SDIR) OBJ((AR_INTCAML));
+
+-- AR_CMLORDR
+CL: CPYSRCF FROMFILE(WEB_5TDV/QRPGLESRC) TOFILE(WEB_5DEV/QRPGLESRC) FROMMBR(AR_CMLORDR) TOMBR(AR_CMLORDR);
+CL: CRTSQLRPGI OBJ(WEB_5OBJ/AR_CMLORDR) SRCFILE(WEB_5DEV/QRPGLESRC) COMMIT(*NONE) OPTION(*EVENTF *XREF) TGTRLS(V7R2M0) TEXT('Web - Open CAMEL PO');
+
+-- AC_CMLORDR
+CL: CPYSRCF FROMFILE(WEB_5TDV/QCLLESRC) TOFILE(WEB_5DEV/QCLLESRC) FROMMBR(AC_CMLORDR) TOMBR(AC_CMLORDR);
+CL: CRTBNDCL PGM(WEB_5OBJ/AC_CMLORDR) SRCFILE(WEB_5DEV/QCLLESRC) OPTION(*EVENTF) TEXT('Web - Open CAMEL PO');
+
+-- TS_CMLORDR
+CL: CPYSRCF FROMFILE(WEB_5TDV/QCLLESRC) TOFILE(WEB_5DEV/QCLLESRC) FROMMBR(TS_CMLORDR) TOMBR(TS_CMLORDR);
+CL: CRTBNDCL PGM(WEB_5OBJ/TS_CMLORDR) SRCFILE(WEB_5DEV/QCLLESRC) OPTION(*EVENTF) TEXT('Web - Testing AC_CMLORDR');
+
+CL: GRTOBJAUT OBJ(WEB_5OBJ/AR_INTCAML) OBJTYPE(*SRVPGM) USER(*PUBLIC) AUT(*ALL);
+CL: GRTOBJAUT OBJ(WEB_5OBJ/AR_CMLORDR) OBJTYPE(*PGM) USER(*PUBLIC) AUT(*ALL);
+CL: GRTOBJAUT OBJ(WEB_5OBJ/AC_CMLORDR) OBJTYPE(*PGM) USER(*PUBLIC) AUT(*ALL);
+CL: GRTOBJAUT OBJ(WEB_5OBJ/TS_CMLORDR) OBJTYPE(*PGM) USER(*PUBLIC) AUT(*ALL);
+
+--------------------------------------------------------------------------------
+-- Hotfix to self-hosted
+--------------------------------------------------------------------------------
+
+-- Clear save file
+CL: CLRSAVF FILE(QGPL/r6objects);
+
+-- Add objects to save file
+CL: SAVOBJ OBJ(AR_INTCAML AC_CMLORDR AR_CMLORDR TS_CMLORDR) LIB(ACS_5OBJ) DEV(*SAVF) SAVF(QGPL/r6objects);
+
+-- Upload savefile to Smartfile FTP site
+--  (on Conan Dev)
+FTP RMTSYS(K3S.SMARTFILE.COM)
+> cd /R6_Deployment/Customer_Access
+  250 "/R6_Deployment/Customer_Access" is the current directory.
+> bin
+  200 Type set to: Binary.
+> put r6objects                                                        
+229 Entering extended passive mode (|||21344|).                            
+125 Data connection already open. Transfer starting.                       
+226 Transfer complete.                                                     
+2356992 bytes transferred in 0.721 seconds. Transfer rate 3270.406 KB/sec. 
+
+
+--------------------------------------------------------------------------------
+-- Hotfix to hosted
+--------------------------------------------------------------------------------
+-- Clear the save file
+CL: CLRSAVF FILE(QGPL/APIMISSCHK);
+
+-- Add API object in error to save file
+CL: SAVOBJ OBJ(AR_CMLORDR AR_LTMAPOR) LIB(WEB_5OBJ) DEV(*SAVF) SAVF(QGPL/APIMISSCHK);
+
+-- Transfer save file
+CL: CALL QGPL/CBEAN_PUTL;
+
+-- on Leno...
+
+-- Restore the save file objects to library DMO
+CL: RSTOBJ OBJ(*ALL) SAVLIB(ACS_5DEV) DEV(*SAVF) SAVF(QGPL/APIMISSCHK) RSTLIB(DMO_5OBJ) ALWOBJDIF(*ALL) MBROPT(*ALL);
+
+
+--------------------------------------------------------------------------------
+-- Hotfix to self-hosted
+--------------------------------------------------------------------------------
+-- Clear the save file
+CL: CLRSAVF FILE(QGPL/APIMISSCHK);
+
+-- Add API object in error to save file
+CL: SAVOBJ OBJ(AR_PUSORDR AR_LTMAPOR) LIB(WEB_5OBJ) DEV(*SAVF) SAVF(QGPL/APIMISSCHK);
+
+-- Transfer save file
+CL: CALL QGPL/CBEAN_PUTL;
+
+
+--------------------------------------------------------------------------------
+-- Hotfix to Conan DR
+--------------------------------------------------------------------------------
+
+-- Clear the save file
+CL: CLRSAVF FILE(QGPL/APIMISSCHK);
+
+-- Add API objects to save file
+CL: SAVOBJ OBJ(AR_PUSORDR AR_LTMAPOR) LIB(WEB_5OBJ) DEV(*SAVF) SAVF(QGPL/APIMISSCHK);
+
+-- Transfer save file
+CL: CALL QGPL/CBEANPUTDR;
+
+
+
+
+
+
+
+
+
+
+
+-- Scratch
+drop table FT_5DTA.k_intcaml;
+CREATE OR REPLACE TABLE FT_5DTA.K_INTCAML ( 
+	CE_COMP CHAR(1) CCSID 37 NOT NULL DEFAULT '', 
+	CE_LOCN CHAR(5) CCSID 37 NOT NULL DEFAULT '', 
+	CE_BIRTH DATE DEFAULT CURRENT_DATE NOT NULL,
+    CE_BIRTHTM TIME DEFAULT CURRENT_TIME NOT NULL NOT HIDDEN,
+	CE_USER CHAR(10) CCSID 37 NOT NULL DEFAULT '' , 
+	CE_SNDUSER CHAR(10) CCSID 37 DEFAULT NULL , 
+	CE_K3SPO CHAR(10) CCSID 37 NOT NULL DEFAULT '' , 
+	CE_CUSPO CHAR(10) CCSID 37 NOT NULL DEFAULT '' , 
+	CE_STATUS CHAR(1) CCSID 37 NOT NULL DEFAULT '' , 
+	CE_USERA1 CHAR(10) CCSID 37 NOT NULL DEFAULT '' , 
+	CE_USERA2 CHAR(10) CCSID 37 NOT NULL DEFAULT '' , 
+	CE_USERA3 CHAR(10) CCSID 37 NOT NULL DEFAULT '' , 
+	CE_POMSG CHAR(255) CCSID 37 DEFAULT NULL 
+) RCDFMT RK_INTCAML ; 
+  
+LABEL ON COLUMN FT_5DTA.K_INTCAML 
+( 
+    CE_COMP TEXT IS 'Company ID',
+    CE_LOCN TEXT IS 'Location ID',
+    CE_BIRTH TEXT IS 'PO Send birth date',
+    CE_BIRTHTM TEXT IS 'PO Send birth time',
+    CE_USER TEXT IS 'User Who Approved PO',
+	CE_SNDUSER TEXT IS 'User Who Sent PO',
+    CE_K3SPO TEXT IS 'K3S PO Number',
+    CE_CUSPO TEXT IS 'Customer PO Number',
+    CE_STATUS TEXT IS '(O)pen (C)losted (E)rr',
+    CE_USERA1 TEXT IS 'User Field 1',
+    CE_USERA2 TEXT IS 'User Field 2',
+    CE_USERA3 TEXT IS 'User Field 3',
+	CE_POMSG TEXT IS 'Message Container'
+); 
+
+LABEL ON TABLE ACS_5MOD.K_INTCAML IS 'Interface for Camel POs';
+
+
+
+
+
+

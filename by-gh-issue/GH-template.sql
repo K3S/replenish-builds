@@ -8,7 +8,14 @@
 -- 6. If service programs are involved...
 --    A. Search for <srvpgm_name> and replace with service program name
 --    B. Search for <srvpgm_text> and replace with service program text
---
+
+--------------------------------------------------------------------------------
+-- Set Up
+--------------------------------------------------------------------------------
+
+-- CL: CPYSRCF FROMFILE(WEB_5DEV/QRPGLESRC) TOFILE(ACS_5DEV/QRPGLESRC) FROMMBR(<api_name>) TOMBR(<api_name>);
+
+
 
 --------------------------------------------------------------------------------
 -- In Development
@@ -56,7 +63,7 @@ CL: CPYSRCF FROMFILE(ACS_5DEV/QRPGLESRC) TOFILE(WEB_5TDV/QRPGLESRC) FROMMBR(<srv
 CL: CRTSQLRPGI OBJ(WEB_5TST/AR_<srvpgm_name>) SRCFILE(WEB_5TDV/QRPGLESRC) OBJTYPE(*MODULE) DBGVIEW(*SOURCE) TGTRLS(V7R2M0);
 CL: CPYSRCF FROMFILE(ACS_5DEV/QSRVSRC) TOFILE(WEB_5TDV/QSRVSRC) FROMMBR(<srvpgm_name>_B) TOMBR(<srvpgm_name>_B);
 CL: CRTSRVPGM SRVPGM(WEB_5TST/AR_<srvpgm_name>) MODULE(WEB_5TST/AR_<srvpgm_name>) SRCFILE(WEB_5TDV/QSRVSRC) SRCMBR(<srvpgm_name>_B) BNDDIR(K3SDIR) TEXT('<srvpgm_text>');
-CL: ADDBNDDIRE BNDDIR(K3SDIR) OBJ((<srvpgm_name>));
+CL: ADDBNDDIRE BNDDIR(K3SDIR) OBJ((AR_<srvpgm_name>));
 
 -- API Program(s)
 -- AR_<api_name>
@@ -134,7 +141,7 @@ FTP RMTSYS(K3S.SMARTFILE.COM)
 CL: CLRSAVF FILE(QGPL/APIMISSCHK);
 
 -- Add API object in error to save file
-CL: SAVOBJ OBJ(AR_<api_name> AR_LTMAPOR) LIB(WEB_5OBJ) DEV(*SAVF) SAVF(QGPL/APIMISSCHK);
+CL: SAVOBJ OBJ(AR_<api_name> AC_<api_name> TS_<api_name>) LIB(WEB_5OBJ) DEV(*SAVF) SAVF(QGPL/APIMISSCHK);
 
 -- Transfer save file
 CL: CALL QGPL/CBEAN_PUTL;
