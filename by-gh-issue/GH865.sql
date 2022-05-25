@@ -3,20 +3,6 @@
 --------------------------------------------------------------------------------
 -- DEVTOOLS/SETENV ENV(DEV)
 
--------------------------------
---        Tables
--------------------------------
--- K_MFUBHED
-CL: DLTF FILE(ACS_5MOD/K_MFUBHED);
-CL: CRTPF FILE(ACS_5MOD/K_MFUBHED) SRCFILE(ACS_5DEV/QDDSSRC) SRCMBR(K_MFUBHED) IGCDTA(*N);
-
--- K_MFUBENT
-CL: DLTF FILE(ACS_5MOD/K_MFUBENT);
-CL: CRTPF FILE(ACS_5MOD/K_MFUBENT) SRCFILE(ACS_5DEV/QDDSSRC) SRCMBR(K_MFUBENT) IGCDTA(*N);
-
--- K_INTMFUB
-CL: DLTF FILE(ACS_5MOD/K_INTMFUB);
-CL: CRTPF FILE(ACS_5MOD/K_INTMFUB) SRCFILE(ACS_5DEV/QDDSSRC) SRCMBR(K_INTMFUB) IGCDTA(*N);
 
 
 -------------------------------
@@ -333,7 +319,7 @@ CL: CALL PGM(ACS_5OBJ/APIPRACT) PARM('TS_USRMFUB' 'WEB_5TDV' 'QCLLESRC' 'QCLLESR
 
 
 -- Set to current date
-CL: CHGDTAARA DTAARA(WEB_5OBJ/AR_RELEASE *ALL) VALUE('040922');
+CL: CHGDTAARA DTAARA(WEB_5OBJ/AR_RELEASE *ALL) VALUE('040622');
 
 --------------------------------------------------------------------------------
 -- Hotfix to FTP site
